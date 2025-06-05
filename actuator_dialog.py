@@ -18,15 +18,15 @@ class ActuatorDialog:
         # Create dialog window
         self.dialog = tk.Toplevel(parent)
         self.dialog.title(f"Use Template: {template_name}")
-        self.dialog.geometry("600x500")
+        self.dialog.geometry("900x800")
         self.dialog.transient(parent)
         self.dialog.grab_set()
         
         # Center the dialog
         self.dialog.update_idletasks()
-        x = (self.dialog.winfo_screenwidth() // 2) - (600 // 2)
-        y = (self.dialog.winfo_screenheight() // 2) - (500 // 2)
-        self.dialog.geometry(f"600x500+{x}+{y}")
+        x = (self.dialog.winfo_screenwidth() // 2) - (450)
+        y = (self.dialog.winfo_screenheight() // 2) - (400)
+        self.dialog.geometry(f"900x800+{x}+{y}")
         
         # Store actuator inputs
         self.actuator_inputs = []
@@ -66,7 +66,7 @@ class ActuatorDialog:
                  foreground="blue").pack(anchor=tk.W, pady=(0, 10))
         
         # Scrollable frame for actuator inputs
-        canvas = tk.Canvas(input_frame, height=200)
+        canvas = tk.Canvas(input_frame, height=300)
         scrollbar = ttk.Scrollbar(input_frame, orient="vertical", command=canvas.yview)
         self.scrollable_frame = ttk.Frame(canvas)
         
@@ -102,7 +102,7 @@ class ActuatorDialog:
         preview_frame = ttk.LabelFrame(main_frame, text="Preview", padding="10")
         preview_frame.pack(fill=tk.X, pady=(0, 15))
         
-        self.preview_text = tk.Text(preview_frame, height=6, width=70, 
+        self.preview_text = tk.Text(preview_frame, height=4, width=70, 
                                    wrap=tk.WORD, state=tk.DISABLED)
         preview_scrollbar = ttk.Scrollbar(preview_frame, orient="vertical", 
                                         command=self.preview_text.yview)
@@ -114,9 +114,9 @@ class ActuatorDialog:
         ttk.Button(preview_frame, text="Update Preview", 
                   command=self.update_preview).pack(pady=(10, 0))
         
-        # Dialog buttons
+        # Dialog buttons - fixed at bottom
         button_frame = ttk.Frame(main_frame)
-        button_frame.pack(fill=tk.X)
+        button_frame.pack(side=tk.BOTTOM, fill=tk.X, pady=(20, 10))
         
         ttk.Button(button_frame, text="Generate", 
                   command=self.generate_actuators).pack(side=tk.RIGHT, padx=(10, 0))

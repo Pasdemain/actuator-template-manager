@@ -118,9 +118,13 @@ class ExcelGenerator:
             # Generate rows to insert
             rows = self.generate_excel_rows(actuators_data)
             
-            # Insert rows below the Actuator row
-            insert_row = actuator_row + 1
+            # Find the insertion point (after the last data row before "Actuator End")
+            insert_row = self._find_insertion_point(worksheet, actuator_row)
             
+            # Insert new rows to make space (instead of overwriting)
+            worksheet.Rows(f"{insert_row}:{insert_row + len(rows) - 1}").Insert()
+            
+            # Insert row data
             for i, row in enumerate(rows):
                 current_row = insert_row + i
                 
@@ -132,6 +136,29 @@ class ExcelGenerator:
             
         except Exception as e:
             return False, f"Error inserting into Excel: {str(e)}"
+    
+    def _find_insertion_point(self, worksheet, actuator_row):
+        """Find the best insertion point (before 'Actuator End' or after last data)"""
+        try:
+            # Look for "Actuator End" marker
+            for row in range(actuator_row + 1, actuator_row + 1000):
+                cell_value = str(worksheet.Cells(row, 1).Value).strip().lower()
+                if cell_value == "actuator end":
+                    return row  # Insert before "Actuator End"
+            
+            # If no "Actuator End" found, find last non-empty row after actuator header
+            last_data_row = actuator_row + 1
+            for row in range(actuator_row + 1, actuator_row + 1000):
+                cell_value = worksheet.Cells(row, 1).Value
+                if cell_value is None or str(cell_value).strip() == "":
+                    break
+                last_data_row = row + 1
+            
+            return last_data_row
+            
+        except Exception:
+            # Fallback: insert right after actuator header
+            return actuator_row + 1
     
     def _find_actuator_row(self, worksheet):
         """Find the row containing 'Actuator' in the first column"""
